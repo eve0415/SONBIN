@@ -29,7 +29,7 @@ fn gen_bingo_col(col: u64, seed: Option<u64>) -> Vec<u64> {
 
         let gen_number = gen_number(min, max, &arr, seed);
         // まだ出ていない数字だった場合
-        if arr.iter().find(|&&x| x == gen_number) == None {
+        if arr.iter().find(|&&x| x == gen_number).is_none() {
             arr.push(gen_number);
         };
     }
