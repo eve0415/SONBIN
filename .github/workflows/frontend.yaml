@@ -1,5 +1,5 @@
-name: frontend
-on: [push, pull_request]
+name: Frontend
+on: pull_request
 jobs:
   check:
     name: Check code
