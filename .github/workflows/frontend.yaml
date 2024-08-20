@@ -1,0 +1,26 @@
+name: frontend
+on: [push, pull_request]
+jobs:
+  check:
+    name: Check code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup node.js environment
+        uses: actions/setup-node@main
+        with:
+          node-version-file: package.json
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check lint and format
+        run: pnpm run lint:ci
+
+      - name: Check Build
+        run: pnpm run build
