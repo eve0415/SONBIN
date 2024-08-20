@@ -1,6 +1,10 @@
-[package]
+[workspace]
+resolver = "2"
+members = ["backend/bingo", "backend/oauth", "backend/server"]
+
+[workspace.package]
 name = "SONBIN"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+[workspace.dependencies]

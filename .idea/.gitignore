@@ -4,4 +4,3 @@
 # エディターベースの HTTP クライアントリクエスト
 /httpRequests/
 *.xml
-!workspace.xml
