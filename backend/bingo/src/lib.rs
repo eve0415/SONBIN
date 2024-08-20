@@ -1,1 +1,2 @@
+mod board;
 mod generate;
