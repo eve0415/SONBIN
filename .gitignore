@@ -1,1 +1,7 @@
 /target
+
+# Frontend
+node_modules
+dist
+
+.env*
