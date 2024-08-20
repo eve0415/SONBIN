@@ -4,3 +4,7 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+rand = "0.8.5"
+
+[dev-dependencies]
+rstest = "0.22.0"
