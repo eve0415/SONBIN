@@ -7,9 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint --fix ./frontend/**/*.{js,jsx,ts,tsx} && prettier --write .",
+    "lint": "eslint --fix ./frontend/**/*.{ts,tsx} && prettier --write .",
     "format": "prettier --write .",
-    "lint:ci": "eslint ./frontend/**/*.{js,jsx,ts,tsx} && prettier --check ."
+    "check": "eslint ./frontend/**/*.{ts,tsx} && prettier --check ."
   },
   "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247",
   "dependencies": {
