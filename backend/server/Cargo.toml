@@ -4,3 +4,8 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+anyhow.workspace = true
+oauth.workspace = true
+redis.workspace = true
+
+tokio = { version = "1.39.3", features = ["rt-multi-thread", "macros"] }

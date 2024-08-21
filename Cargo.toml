@@ -3,8 +3,12 @@ resolver = "2"
 members = ["backend/bingo", "backend/oauth", "backend/server"]
 
 [workspace.package]
-name = "SONBIN"
 version = "0.1.0"
 edition = "2021"
 
 [workspace.dependencies]
+bingo = { path = "backend/bingo" }
+oauth = { path = "backend/oauth" }
+
+anyhow = "1.0.86"
+redis = { version = "0.26.1", features = ["aio","r2d2","ahash","tokio-comp","connection-manager"] }
