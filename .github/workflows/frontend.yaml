@@ -1,17 +1,17 @@
 name: Frontend
 on: pull_request
 jobs:
-  check:
-    name: Check code
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup node.js environment
+      - name: Setup Node.js Environment
         uses: actions/setup-node@main
         with:
-          node-version-file: package.json
+          cache: pnpm
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -19,8 +19,45 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check lint and format
-        run: pnpm run lint:ci
+      - name: Link Check
+        run: pnpm eslint ./frontend/**/*.{ts,tsx}
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Check Build
-        run: pnpm run build
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@main
+        with:
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Format Check
+        run: pnpm prettier --check .
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@main
+        with:
+          cache: pnpm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Check
+        run: pnpm build
