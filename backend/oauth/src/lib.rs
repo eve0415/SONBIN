@@ -197,16 +197,16 @@ fn generate_random_string(size: usize) -> String {
 
 /// Response from Discord's OAuth2 token endpoint
 /// [Access Token Response](https://discord.com/developers/docs/topics/oauth2#authorization-code-grant-access-token-response)
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 struct AccessTokenResponse {
     pub(crate) access_token: String,
-    token_type: String,
-    expires_in: i32,
-    refresh_token: String,
-    scope: String,
+    // token_type: String,
+    // expires_in: i32,
+    // refresh_token: String,
+    // scope: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct User {
     pub id: String,
     pub name: String,
