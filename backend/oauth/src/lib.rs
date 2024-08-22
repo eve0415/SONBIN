@@ -176,8 +176,6 @@ fn generate_state_and_code_challenge() -> (String, String, String) {
     let code_challenge = base64::engine::general_purpose::URL_SAFE_NO_PAD
         .encode(Sha256::digest(code_verifier.as_bytes()));
 
-    println!("{}, {}, {}", state, code_verifier, code_challenge);
-
     (state, code_verifier, code_challenge)
 }
 
@@ -216,7 +214,7 @@ mod tests {
         let (_, code_verifier, code_challenge) = generate_state_and_code_challenge();
 
         assert_eq!(
-            base64::engine::general_purpose::URL_SAFE
+            base64::engine::general_purpose::URL_SAFE_NO_PAD
                 .encode(Sha256::digest(code_verifier.as_bytes())),
             code_challenge
         );
