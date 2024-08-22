@@ -45,7 +45,7 @@ impl DiscordOAuth {
         }
     }
 
-    pub async fn generate_authorization_url(self) -> anyhow::Result<Url> {
+    pub async fn generate_authorization_url(self) -> error::Result<Url> {
         let (state, code_verifier, code_challenge) = generate_state_and_code_challenge();
 
         redis::cmd("HSETEX")
@@ -53,22 +53,32 @@ impl DiscordOAuth {
             .arg(STATE_LIFETIME)
             .arg(state.clone())
             .arg(code_verifier)
-            .exec_async(&mut self.redis_client.get_multiplexed_tokio_connection().await?)
-            .await?;
+            .exec_async(
+                &mut self
+                    .redis_client
+                    .get_multiplexed_tokio_connection()
+                    .await
+                    .map_err(|_| error::Error::RedisConnectionLost)?,
+            )
+            .await
+            .map_err(|e| error::Error::Unknown(e.into()))?;
 
-        Ok(Url::parse_with_params(
+        let url = Url::parse_with_params(
             AUTHORIZATION_URL,
             &[
                 ("client_id", self.id.to_owned()),
                 ("response_type", RESPONSE_TYPE.to_string()),
                 ("scope", SCOPE.to_string()),
-                ("redirect_uri", format!("{}/login", self.redirect_url)),
+                ("redirect_uri", self.redirect_url.to_string()),
                 ("state", state),
                 ("code_challenge", code_challenge),
                 ("code_challenge_method", CODE_CHALLENGE_METHOD.to_string()),
                 ("prompt", "none".to_string()),
             ],
-        )?)
+        )
+        .map_err(|e| error::Error::Unknown(e.into()))?;
+
+        Ok(url)
     }
 
     pub async fn get_user(self, code: String, state: String) -> error::Result<User> {
@@ -76,7 +86,7 @@ impl DiscordOAuth {
             .redis_client
             .get_multiplexed_tokio_connection()
             .await
-            .map_err(|_| error::Error::RedisConnectionLost())?;
+            .map_err(|_| error::Error::RedisConnectionLost)?;
         let code_verifier: String = redis::cmd("HGET")
             .arg("oauth")
             .arg(state.to_owned())
@@ -95,7 +105,7 @@ impl DiscordOAuth {
             ("client_secret", self.secret.to_owned()),
             ("grant_type", GRANT_TYPE.to_string()),
             ("code", code),
-            ("redirect_uri", format!("{}/login", self.redirect_url)),
+            ("redirect_uri", self.redirect_url.to_string()),
             ("code_verifier", code_verifier),
         ]);
 

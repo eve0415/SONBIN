@@ -1,7 +1,7 @@
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("Redis connection lost")]
-    RedisConnectionLost(),
+    RedisConnectionLost,
 
     #[error("State not found: {state}")]
     InvalidState { state: String },
