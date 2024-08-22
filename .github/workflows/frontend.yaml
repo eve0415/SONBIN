@@ -1,4 +1,4 @@
-name: Frontend
+name: Frontend Tests
 on: pull_request
 jobs:
   lint:
@@ -14,15 +14,16 @@ jobs:
         run: corepack enable pnpm
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@main
+        uses: actions/setup-node@v4
         with:
           cache: pnpm
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Link Check
+      - name: Check
         run: pnpm eslint ./frontend/**/*.{ts,tsx}
+
   format:
     name: Format
     runs-on: ubuntu-latest
@@ -36,15 +37,16 @@ jobs:
         run: corepack enable pnpm
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@main
+        uses: actions/setup-node@v4
         with:
           cache: pnpm
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Format Check
+      - name: Check
         run: pnpm prettier --check .
+
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -58,12 +60,12 @@ jobs:
         run: corepack enable pnpm
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@main
+        uses: actions/setup-node@v4
         with:
           cache: pnpm
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Check
+      - name: Check
         run: pnpm build
