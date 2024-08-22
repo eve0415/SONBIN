@@ -25,6 +25,6 @@
       "~/*": ["frontend/*"]
     }
   },
-  "include": ["frontend", "**/*.js", "**/*.ts", "**/*.tsx"],
+  "include": ["frontend", "*.js", "*.ts"],
   "exclude": ["node_modules", "backend"]
 }
