@@ -11,4 +11,6 @@ bingo = { path = "backend/bingo" }
 oauth = { path = "backend/oauth" }
 
 anyhow = "1.0.86"
+log = "0.4.22"
 redis = { version = "0.26.1", features = ["aio","r2d2","ahash","tokio-comp","connection-manager"] }
+serde = { version = "1.0.208", features = ["derive"] }

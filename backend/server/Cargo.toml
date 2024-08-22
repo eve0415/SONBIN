@@ -5,7 +5,11 @@ edition.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+log.workspace = true
 oauth.workspace = true
 redis.workspace = true
+serde.workspace = true
 
-tokio = { version = "1.39.3", features = ["rt-multi-thread", "macros"] }
+axum = { version = "0.7.5", features = ["ws"] }
+tokio = { version = "1.39.3", features = ["rt-multi-thread", "macros", "rt"] }
+tracing-subscriber = "0.3.18"
