@@ -1,6 +1,6 @@
 import { Switch, Route } from "wouter";
 
-import { Home } from "./pages";
+import { Home } from "./pages/home";
 
 import type { FC } from "react";
 
