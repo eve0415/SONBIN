@@ -1,11 +1,14 @@
 name: Frontend Tests
+
 on: pull_request
+
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -27,8 +30,6 @@ jobs:
   format:
     name: Format
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -50,8 +51,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
