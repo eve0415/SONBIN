@@ -9,7 +9,7 @@ pub enum BoardState {
 
 pub struct Board {
     /// UserのSnowflake ID + SessionID
-    id: u64,
+    pub id: u64,
     /// 数字盤のサイズ
     pub size: usize,
     /// 数字盤に書かれている数字

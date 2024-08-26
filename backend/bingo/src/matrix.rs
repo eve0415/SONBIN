@@ -62,28 +62,19 @@ pub trait Matrix {
 
 impl Matrix for Vec<Vec<usize>> {
     fn row(&self, row: usize) -> Vec<usize> {
-        self.into_iter()
-            .enumerate()
-            .map(|(i, _)| self[row][i])
-            .collect()
+        self.iter().enumerate().map(|(i, _)| self[row][i]).collect()
     }
 
     fn col(&self, col: usize) -> Vec<usize> {
-        self.into_iter()
-            .enumerate()
-            .map(|(i, _)| self[i][col])
-            .collect()
+        self.iter().enumerate().map(|(i, _)| self[i][col]).collect()
     }
 
     fn diagnoal_from_upper_left(&self) -> Vec<usize> {
-        self.into_iter()
-            .enumerate()
-            .map(|(i, _)| self[i][i])
-            .collect()
+        self.iter().enumerate().map(|(i, _)| self[i][i]).collect()
     }
 
     fn diagnoal_from_upper_right(&self) -> Vec<usize> {
-        self.into_iter()
+        self.iter()
             .enumerate()
             .map(|(i, _)| self[i][self.len() - i - 1])
             .collect()

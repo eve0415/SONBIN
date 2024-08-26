@@ -51,7 +51,7 @@ pub fn board_numbers(rng: &mut StdRng, size: usize) -> Vec<Vec<usize>> {
 
             let gen_number = number(rng, min, max);
 
-            if column.iter().find(|&&x| x == gen_number).is_none() {
+            if !column.iter().any(|&x| x == gen_number) {
                 column.push(gen_number)
             }
         }
