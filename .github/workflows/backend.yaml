@@ -55,7 +55,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Check
-        run: cargo build --release --verbose
+        run: cargo build --release
 
   test:
     name: Test
@@ -71,4 +71,4 @@ jobs:
         uses: Swatinem/rust-cache@v2
 
       - name: Check
-        run: cargo test --verbose
+        run: cargo test
