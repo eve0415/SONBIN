@@ -19,22 +19,23 @@ impl Board {
         let mut bingo = vec![];
 
         for i in 0..self.size {
-            if self.opened_count_in_vec(self.numbers.row(i)) == self.size {
+            if opened_count_in_vec(&self.opened, self.numbers.row(i)) == self.size {
                 bingo.push(self.numbers.row(i));
             }
         }
 
         for i in 0..self.size {
-            if self.opened_count_in_vec(self.numbers.col(i)) == self.size {
+            if opened_count_in_vec(&self.opened, self.numbers.col(i)) == self.size {
                 bingo.push(self.numbers.col(i));
             }
         }
 
-        if self.opened_count_in_vec(self.numbers.diagnoal_from_upper_left()) == self.size {
+        if opened_count_in_vec(&self.opened, self.numbers.diagnoal_from_upper_left()) == self.size {
             bingo.push(self.numbers.diagnoal_from_upper_left());
         }
 
-        if self.opened_count_in_vec(self.numbers.diagnoal_from_upper_right()) == self.size {
+        if opened_count_in_vec(&self.opened, self.numbers.diagnoal_from_upper_right()) == self.size
+        {
             bingo.push(self.numbers.diagnoal_from_upper_right());
         }
 
@@ -62,22 +63,26 @@ impl Board {
         let mut reach = vec![];
 
         for i in 0..self.size {
-            if self.opened_count_in_vec(self.numbers.row(i)) == self.size - 1 {
+            if opened_count_in_vec(&self.opened, self.numbers.row(i)) == self.size - 1 {
                 reach.push(self.numbers.row(i))
             }
         }
 
         for i in 0..self.size {
-            if self.opened_count_in_vec(self.numbers.col(i)) == self.size - 1 {
+            if opened_count_in_vec(&self.opened, self.numbers.col(i)) == self.size - 1 {
                 reach.push(self.numbers.col(i));
             }
         }
 
-        if self.opened_count_in_vec(self.numbers.diagnoal_from_upper_left()) == self.size - 1 {
+        if opened_count_in_vec(&self.opened, self.numbers.diagnoal_from_upper_left())
+            == self.size - 1
+        {
             reach.push(self.numbers.diagnoal_from_upper_left());
         }
 
-        if self.opened_count_in_vec(self.numbers.diagnoal_from_upper_right()) == self.size - 1 {
+        if opened_count_in_vec(&self.opened, self.numbers.diagnoal_from_upper_right())
+            == self.size - 1
+        {
             reach.push(self.numbers.diagnoal_from_upper_right());
         }
 
@@ -86,22 +91,12 @@ impl Board {
             _ => None,
         }
     }
+}
 
-    /// vecで与えられた数字が[Board].openedに何個存在するか返す
-    ///
-    /// # 例
-    ///
-    /// ```
-    /// # use bingo::board::Board;
-    /// let mut board = Board::new(1, 5).unwrap();
-    /// board.opened = vec![2, 4];
-    /// assert_eq!(board.opened_count_in_vec(vec![2, 4, 5]), 2)
-    /// ```
-    pub fn opened_count_in_vec(&self, vec: Vec<usize>) -> usize {
-        vec.iter()
-            .filter(|&x| *x == 0 || self.opened.contains(x))
-            .count()
-    }
+fn opened_count_in_vec(opened: &Vec<usize>, vec: Vec<usize>) -> usize {
+    vec.iter()
+        .filter(|&x| *x == 0 || opened.contains(x))
+        .count()
 }
 
 #[cfg(test)]
@@ -110,10 +105,7 @@ mod tests {
 
     #[test]
     fn works_opened_count_in_vec() {
-        let mut board = Board::new(1, 5).unwrap();
-        board.open(2);
-        board.open(4);
-        assert_eq!(board.opened_count_in_vec(vec![2, 4, 5]), 2);
+        assert_eq!(opened_count_in_vec(&vec![2, 4], vec![2, 4, 5]), 2);
     }
 
     #[test]
