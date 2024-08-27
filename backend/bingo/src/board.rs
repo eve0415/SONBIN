@@ -19,14 +19,15 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn new(id: u64, size: usize) -> Self {
+    pub fn new(id: u64, size: usize) -> Result<Self, String> {
         let mut rng = rand::SeedableRng::seed_from_u64(id);
-        Self {
+        let numbers = generate::generate_board_numbers(&mut rng, size)?;
+        Ok(Self {
             id,
             size,
-            numbers: generate::generate_board_numbers(&mut rng, size),
+            numbers,
             opened: vec![],
-        }
+        })
     }
 
     pub fn open(&mut self, number: usize) -> BoardState {
@@ -58,7 +59,7 @@ mod tests {
         //   [ 3, 23, 37, 46, 62],
         //   [ 4, 19, 33, 55, 63]
         // ]
-        let mut board = Board::new(1, 5);
+        let mut board = Board::new(1, 5).unwrap();
         assert_eq!(board.open(15), BoardState::NONE);
         assert_eq!(board.open(21), BoardState::NONE);
         assert_eq!(

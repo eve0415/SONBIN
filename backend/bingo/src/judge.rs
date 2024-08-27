@@ -6,7 +6,7 @@ impl Board {
     /// # 例
     /// ```
     /// # use bingo::board::Board;
-    /// let mut board = Board::new(1, 3);
+    /// let mut board = Board::new(1, 3).unwrap();
     /// board.numbers = vec![
     ///   vec![15, 18, 45],
     ///   vec![11, 0, 36],
@@ -49,7 +49,7 @@ impl Board {
     /// # 例
     /// ```
     /// # use bingo::board::Board;
-    /// let mut board = Board::new(1, 3);
+    /// let mut board = Board::new(1, 3).unwrap();
     /// board.numbers = vec![
     ///   vec![15, 18, 45],
     ///   vec![11, 0, 36],
@@ -93,7 +93,7 @@ impl Board {
     ///
     /// ```
     /// # use bingo::board::Board;
-    /// let mut board = Board::new(1, 5);
+    /// let mut board = Board::new(1, 5).unwrap();
     /// board.opened = vec![2, 4];
     /// assert_eq!(board.opened_count_in_vec(vec![2, 4, 5]), 2)
     /// ```
@@ -110,7 +110,7 @@ mod tests {
 
     #[test]
     fn works_opened_count_in_vec() {
-        let mut board = Board::new(1, 5);
+        let mut board = Board::new(1, 5).unwrap();
         board.open(2);
         board.open(4);
         assert_eq!(board.opened_count_in_vec(vec![2, 4, 5]), 2);
@@ -123,7 +123,7 @@ mod tests {
         //   [11, 0, 36],
         //   [7, 19, 41],
         // ]
-        let mut board = Board::new(1, 3);
+        let mut board = Board::new(1, 3).unwrap();
         board.open(15);
         board.open(45);
 
@@ -146,7 +146,6 @@ mod tests {
         //   [X, X, 36],
         //   [7, 19, 41],
         // ]
-        println!("{:?}", board.opened);
         assert_eq!(
             board.judge_reach(),
             Some(vec![
@@ -166,7 +165,7 @@ mod tests {
         //   [11, 0, 36],
         //   [7, 19, 41],
         // ]
-        let mut board = Board::new(1, 3);
+        let mut board = Board::new(1, 3).unwrap();
         board.open(15);
         board.open(45);
         board.open(18);
@@ -175,7 +174,7 @@ mod tests {
 
     #[test]
     fn works_judge_bingo_col() {
-        let mut board = Board::new(1, 3);
+        let mut board = Board::new(1, 3).unwrap();
         board.open(15);
         board.open(11);
         board.open(7);
@@ -184,7 +183,7 @@ mod tests {
 
     #[test]
     fn works_judge_bingo_diagnoal_from_upper_left() {
-        let mut board = Board::new(1, 3);
+        let mut board = Board::new(1, 3).unwrap();
         board.open(15);
         board.open(41);
         assert_eq!(board.judge_bingo(), Some(vec![vec![15, 0, 41]]));
@@ -192,7 +191,7 @@ mod tests {
 
     #[test]
     fn works_judge_bingo_diagnoal_from_upper_right() {
-        let mut board = Board::new(1, 3);
+        let mut board = Board::new(1, 3).unwrap();
         board.open(45);
         board.open(7);
         assert_eq!(board.judge_bingo(), Some(vec![vec![45, 0, 7]]));
