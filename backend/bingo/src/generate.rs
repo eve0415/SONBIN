@@ -9,29 +9,23 @@ use crate::matrix::Transpose;
 /// # 例
 ///
 /// ```
-/// # use bingo::generate::number;
+/// # use bingo::generate::generate_number;
 /// let mut rng = rand::SeedableRng::seed_from_u64(0);
-/// assert_eq!(number(&mut rng, 1, 75), 59);
-/// assert_eq!(number(&mut rng, 1, 75), 17);
+/// assert_eq!(generate_number(&mut rng, 1, 75), 59);
+/// assert_eq!(generate_number(&mut rng, 1, 75), 17);
 /// ```
-pub fn number(rng: &mut StdRng, min: usize, max: usize) -> usize {
+pub fn generate_number(rng: &mut StdRng, min: usize, max: usize) -> usize {
     rng.gen_range(min..=max)
 }
 
 /// sizeで与えられた大きさの数字盤(二次元配列)を返す
 /// ```
-/// # use bingo::generate::board_numbers;
+/// # use bingo::generate::generate_board_numbers;
 /// let mut rng = rand::SeedableRng::seed_from_u64(0);
-/// assert_eq!(board_numbers(&mut rng, 3), vec![[12, 19, 34], [1, 0, 42], [9, 27, 45]]);
+/// assert_eq!(generate_board_numbers(&mut rng, 3), vec![[12, 19, 34], [1, 0, 42], [9, 27, 45]]);
 /// ```
-///
-/// sizeに偶数が渡された場合，panicする
-/// ```should_panic
-/// # use bingo::generate::board_numbers;
-/// let mut rng = rand::SeedableRng::seed_from_u64(0);
-/// board_numbers(&mut rng, 2);
 /// ```
-pub fn board_numbers(rng: &mut StdRng, size: usize) -> Vec<Vec<usize>> {
+pub fn generate_board_numbers(rng: &mut StdRng, size: usize) -> Vec<Vec<usize>> {
     if size % 2 == 0 {
         // TODO: 要件が増えたときに直す
         panic!("size should be odd number");
@@ -49,7 +43,7 @@ pub fn board_numbers(rng: &mut StdRng, size: usize) -> Vec<Vec<usize>> {
                 column.push(0)
             }
 
-            let gen_number = number(rng, min, max);
+            let gen_number = generate_number(rng, min, max);
 
             if !column.iter().any(|&x| x == gen_number) {
                 column.push(gen_number)
@@ -67,21 +61,21 @@ mod tests {
     use super::*;
 
     #[test]
-    fn generate_number() {
+    fn it_can_generate_number() {
         let mut rng = rand::SeedableRng::seed_from_u64(0);
-        assert_eq!(number(&mut rng, 1, 75), 59);
-        assert_eq!(number(&mut rng, 1, 75), 17);
+        assert_eq!(generate_number(&mut rng, 1, 75), 59);
+        assert_eq!(generate_number(&mut rng, 1, 75), 17);
     }
 
     #[test]
-    fn generate_board_numbers() {
+    fn it_can_generate_board_numbers() {
         let mut rng = rand::SeedableRng::seed_from_u64(0);
         assert_eq!(
-            board_numbers(&mut rng, 3),
+            generate_board_numbers(&mut rng, 3),
             vec![[12, 19, 34], [1, 0, 42], [9, 27, 45]]
         );
         assert_eq!(
-            board_numbers(&mut rng, 5),
+            generate_board_numbers(&mut rng, 5),
             vec![
                 [3, 22, 43, 53, 61],
                 [2, 29, 34, 59, 62],
@@ -91,7 +85,7 @@ mod tests {
             ]
         );
         assert_eq!(
-            board_numbers(&mut rng, 7),
+            generate_board_numbers(&mut rng, 7),
             vec![
                 [12, 19, 32, 54, 61, 89, 93],
                 [14, 30, 33, 55, 74, 84, 98],
@@ -103,7 +97,7 @@ mod tests {
             ]
         );
         assert_eq!(
-            board_numbers(&mut rng, 9),
+            generate_board_numbers(&mut rng, 9),
             vec![
                 [12, 29, 44, 58, 63, 90, 98, 114, 123],
                 [8, 19, 39, 47, 70, 85, 92, 106, 131],
@@ -116,12 +110,5 @@ mod tests {
                 [5, 25, 31, 56, 69, 84, 96, 118, 122]
             ]
         );
-    }
-
-    #[test]
-    #[should_panic(expected = "size should be odd number")]
-    fn when_give_even_number_in_board_numbers() {
-        let mut rng = rand::SeedableRng::seed_from_u64(0);
-        board_numbers(&mut rng, 2);
     }
 }

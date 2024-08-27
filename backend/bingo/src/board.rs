@@ -24,7 +24,7 @@ impl Board {
         Self {
             id,
             size,
-            numbers: generate::board_numbers(&mut rng, size),
+            numbers: generate::generate_board_numbers(&mut rng, size),
             opened: vec![],
         }
     }
