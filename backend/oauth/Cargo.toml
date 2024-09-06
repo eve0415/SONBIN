@@ -6,12 +6,12 @@ edition.workspace = true
 [dependencies]
 anyhow.workspace = true
 log.workspace = true
+rand.workspace = true
 redis.workspace = true
 serde.workspace = true
 
 base64 = "0.22.1"
 digest = "0.10.7"
-rand = "0.8.5"
 reqwest = { version = "0.12.7", features = ["rustls-tls-native-roots", "multipart", "json"] }
 serenity = { version = "0.12.2", default-features = false }
 sha2 = "0.10.8"

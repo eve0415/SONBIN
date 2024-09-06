@@ -96,7 +96,8 @@ impl DiscordOAuth {
                 state: state.to_owned(),
             })?;
 
-        conn.hdel("oauth", state.to_owned())
+        let _: () = conn
+            .hdel("oauth", state.to_owned())
             .await
             .map_err(|e| error::Error::Unknown(e.into()))?;
 
