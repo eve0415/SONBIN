@@ -93,7 +93,7 @@ impl Board {
     }
 }
 
-fn opened_count_in_vec(opened: &Vec<usize>, vec: Vec<usize>) -> usize {
+fn opened_count_in_vec(opened: &[usize], vec: Vec<usize>) -> usize {
     vec.iter()
         .filter(|&x| *x == 0 || opened.contains(x))
         .count()
@@ -105,7 +105,7 @@ mod tests {
 
     #[test]
     fn works_opened_count_in_vec() {
-        assert_eq!(opened_count_in_vec(&vec![2, 4], vec![2, 4, 5]), 2);
+        assert_eq!(opened_count_in_vec(&[2, 4], vec![2, 4, 5]), 2);
     }
 
     #[test]
