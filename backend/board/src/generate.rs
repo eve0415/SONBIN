@@ -9,7 +9,7 @@ use crate::matrix::Transpose;
 /// # 例
 ///
 /// ```
-/// # use bingo::generate::generate_number;
+/// # use board::generate::generate_number;
 /// let mut rng = rand::SeedableRng::seed_from_u64(0);
 /// assert_eq!(generate_number(&mut rng, 1, 75), 59);
 /// assert_eq!(generate_number(&mut rng, 1, 75), 17);
@@ -20,7 +20,7 @@ pub fn generate_number(rng: &mut StdRng, min: usize, max: usize) -> usize {
 
 /// sizeで与えられた大きさの数字盤(二次元配列)を返す
 /// ```
-/// # use bingo::generate::generate_board_numbers;
+/// # use board::generate::generate_board_numbers;
 /// let mut rng = rand::SeedableRng::seed_from_u64(0);
 /// assert_eq!(generate_board_numbers(&mut rng, 3), Ok(vec![vec![12, 19, 34], vec![1, 0, 42], vec![9, 27, 45]]));
 /// assert_eq!(generate_board_numbers(&mut rng, 2), Err("Board size must be odd".to_string()))

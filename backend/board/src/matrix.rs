@@ -13,7 +13,7 @@ where
     ///
     /// # 例
     /// ```
-    /// # use bingo::matrix::Transpose;
+    /// # use board::matrix::Transpose;
     /// let matrix = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
     /// assert_eq!(
     ///     matrix.into_iter().transpose().collect::<Vec<Vec<i32>>>(),
@@ -42,7 +42,7 @@ pub trait Matrix {
     /// # 例
     ///
     /// ```
-    /// # use bingo::matrix::Matrix;
+    /// # use board::matrix::Matrix;
     /// let matrix = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
     /// assert_eq!(matrix.diagnoal_from_upper_left(), vec![1, 5, 9]);
     /// ```
@@ -53,7 +53,7 @@ pub trait Matrix {
     /// # 例
     ///
     /// ```
-    /// # use bingo::matrix::Matrix;
+    /// # use board::matrix::Matrix;
     /// let matrix = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
     /// assert_eq!(matrix.diagnoal_from_upper_right(), vec![3, 5, 7]);
     /// ```

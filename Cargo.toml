@@ -1,17 +1,18 @@
 [workspace]
 resolver = "2"
-members = ["backend/bingo", "backend/oauth", "backend/server"]
+members = ["backend/board", "backend/game", "backend/oauth", "backend/server"]
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
 
 [workspace.dependencies]
-bingo = { path = "backend/bingo" }
+board = { path = "backend/board" }
+game = { path = "backend/game" }
 oauth = { path = "backend/oauth" }
 
-anyhow = "1.0.86"
+anyhow = "1.0.87"
 log = "0.4.22"
 rand = "0.8.5"
 redis = { version = "0.26.1", features = ["aio", "r2d2", "ahash", "tokio-comp", "connection-manager"] }
-serde = { version = "1.0.209", features = ["derive"] }
+serde = { version = "1.0.210", features = ["derive"] }

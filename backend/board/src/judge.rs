@@ -5,7 +5,7 @@ impl Board {
     ///
     /// # 例
     /// ```
-    /// # use bingo::board::Board;
+    /// # use board::board::Board;
     /// let mut board = Board::new(1, 3).unwrap();
     /// board.numbers = vec![
     ///   vec![15, 18, 45],
@@ -49,7 +49,7 @@ impl Board {
     ///
     /// # 例
     /// ```
-    /// # use bingo::board::Board;
+    /// # use board::board::Board;
     /// let mut board = Board::new(1, 3).unwrap();
     /// board.numbers = vec![
     ///   vec![15, 18, 45],

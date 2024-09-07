@@ -4,8 +4,11 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-log.workspace = true
+board.workspace = true
+game.workspace = true
 oauth.workspace = true
+
+log.workspace = true
 redis.workspace = true
 serde.workspace = true
 
