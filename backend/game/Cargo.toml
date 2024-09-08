@@ -1,7 +1,6 @@
 [package]
-name = "bingo"
+name = "game"
 version.workspace = true
 edition.workspace = true
 
 [dependencies]
-rand.workspace = true
