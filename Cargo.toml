@@ -16,3 +16,5 @@ log = "0.4.22"
 rand = "0.8.5"
 redis = { version = "0.26.1", features = ["aio", "r2d2", "ahash", "tokio-comp", "connection-manager"] }
 serde = { version = "1.0.210", features = ["derive"] }
+serenity = { version = "0.12.2", default-features = false }
+thiserror = "1.0.63"
