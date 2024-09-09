@@ -442,6 +442,12 @@ dependencies = [
 [[package]]
 name = "game"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "board",
+ "serenity",
+ "thiserror",
+]
 
 [[package]]
 name = "generic-array"

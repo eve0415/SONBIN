@@ -8,6 +8,7 @@ use reqwest::{Client as HttpClient, StatusCode};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
+use serenity::all::UserId;
 use url::Url;
 
 const AUTHORIZATION_URL: &str = "https://discord.com/oauth2/authorize";
@@ -159,7 +160,7 @@ impl DiscordOAuth {
             .map_err(|e| error::Error::Unknown(e.into()))?;
 
         Ok(User {
-            id: member.user.id.to_string(),
+            id: member.user.id,
             name: member.user.name,
             avatar: member.user.avatar.as_ref().map_or_else(
                 || {
@@ -209,7 +210,7 @@ struct AccessTokenResponse {
 
 #[derive(Serialize, Debug)]
 pub struct User {
-    pub id: String,
+    pub id: UserId,
     pub name: String,
     pub avatar: String,
 }
