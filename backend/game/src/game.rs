@@ -38,7 +38,7 @@ impl Game {
             return Ok(board.clone());
         }
 
-        if let Ok(board) = Board::new(id.get() + u64::from(self.id),5) {
+        if let Ok(board) = Board::new(id.get() + u64::from(self.id), 5) {
             self.participants.insert(id, board.clone());
             Ok(board)
         } else {
