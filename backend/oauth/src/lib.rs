@@ -6,9 +6,9 @@ use redis::{AsyncCommands, Client as RedisClient};
 use reqwest::ClientBuilder;
 use reqwest::{Client as HttpClient, StatusCode};
 use serde::{Deserialize, Serialize};
+use serenity::all::UserId;
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
-use serenity::all::UserId;
 use url::Url;
 
 const AUTHORIZATION_URL: &str = "https://discord.com/oauth2/authorize";

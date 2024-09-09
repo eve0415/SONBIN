@@ -1,9 +1,10 @@
+use crate::config::{GameMode, GameSettings};
+use board::board::Board;
+use serenity::all::UserId;
 use std::collections::HashMap;
 use std::time::SystemTime;
-use serenity::all::UserId;
-use board::board::Board;
-use crate::config::{GameMode, GameSettings};
 
+#[derive(Debug)]
 pub struct Game {
     id: u32,
     pub host: UserId,
@@ -15,11 +16,14 @@ pub struct Game {
 impl Game {
     pub fn new(host: UserId, mode: GameMode, settings: GameSettings) -> Self {
         Game {
-            id: SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap().subsec_nanos(),
+            id: SystemTime::now()
+                .duration_since(SystemTime::UNIX_EPOCH)
+                .unwrap()
+                .subsec_nanos(),
             host,
             mode,
             settings,
-            ..Default::default()
+            participants: HashMap::new(),
         }
     }
 
@@ -31,14 +35,14 @@ impl Game {
         }
 
         if let Some(board) = self.participants.get(&id) {
-            return Ok(**board);
+            return Ok(board.clone());
         }
 
-        if let Ok(board) = Board::new(id.get() + From::from(self.id),5) {
+        if let Ok(board) = Board::new(id.get() + u64::from(self.id),5) {
             self.participants.insert(id, board.clone());
             Ok(board)
         } else {
-            Err(Error::BoardGenerationError )
+            Err(Error::BoardGenerationError)
         }
     }
 }

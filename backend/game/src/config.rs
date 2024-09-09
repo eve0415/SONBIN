@@ -1,4 +1,5 @@
 /// ゲームモード
+#[derive(Debug)]
 pub enum GameMode {
     NORMAL,
     /// パチスロ
@@ -29,6 +30,7 @@ pub enum GameMode {
     FOREIGN,
 }
 
+#[derive(Debug)]
 pub struct GameSettings {
     /// 何回でもビンゴできるかどうか
     pub multiple_bingo: bool,
