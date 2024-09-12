@@ -1,5 +1,7 @@
+use serde::{Deserialize, Serialize};
+
 /// ゲームモード
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum GameMode {
     NORMAL,
     /// パチスロ
@@ -30,7 +32,7 @@ pub enum GameMode {
     FOREIGN,
 }
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct GameSettings {
     /// 何回でもビンゴできるかどうか
     pub multiple_bingo: bool,

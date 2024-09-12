@@ -1,4 +1,5 @@
 use crate::generate;
+use serde::Serialize;
 
 #[derive(Debug, PartialEq)]
 pub enum BoardState {
@@ -7,7 +8,7 @@ pub enum BoardState {
     NONE,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Clone, Debug)]
 pub struct Board {
     /// UserのSnowflake ID + SessionID
     pub id: u64,

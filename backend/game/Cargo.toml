@@ -6,6 +6,7 @@ edition.workspace = true
 [dependencies]
 board.workspace = true
 
+anyhow.workspace = true
+serde.workspace = true
 serenity.workspace = true
 thiserror.workspace = true
-anyhow = "1.0.87"

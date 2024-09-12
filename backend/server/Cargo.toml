@@ -11,6 +11,7 @@ oauth.workspace = true
 log.workspace = true
 redis.workspace = true
 serde.workspace = true
+serenity.workspace = true
 
 axum = { version = "0.7.5", features = ["ws"] }
 tokio = { version = "1.40.0", features = ["rt-multi-thread", "macros", "rt"] }

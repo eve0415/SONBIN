@@ -1,10 +1,10 @@
 mod error;
 mod routes;
 
-use crate::routes::login::{get_login_url, login};
 use axum::http::StatusCode;
-use axum::routing::get;
+use axum::routing::{get, post};
 use axum::Router;
+use game::manager::GameManager;
 use oauth::DiscordOAuth;
 use redis::Client;
 use std::env;
@@ -27,12 +27,19 @@ async fn main() {
             ),
             redis,
         ),
+        manager: GameManager::new(),
     };
 
     log::info!("Server starting");
 
     let listener = TcpListener::bind("0.0.0.0:8080").await.unwrap();
-    let router = Router::new().route("/login", get(get_login_url).post(login));
+    let router = Router::new()
+        .route(
+            "/login",
+            get(routes::login::get_login_url).post(routes::login::login),
+        )
+        .route("/game/new", post(routes::game::new_game));
+
     axum::serve(
         listener,
         Router::new()
@@ -47,4 +54,5 @@ async fn main() {
 #[derive(Clone, Debug)]
 struct AppState {
     oauth: DiscordOAuth,
+    manager: GameManager,
 }
