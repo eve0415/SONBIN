@@ -11,7 +11,7 @@ board = { path = "backend/board" }
 game = { path = "backend/game" }
 oauth = { path = "backend/oauth" }
 
-anyhow = "1.0.87"
+anyhow = "1.0.88"
 log = "0.4.22"
 rand = "0.8.5"
 redis = { version = "0.26.1", features = ["aio", "r2d2", "ahash", "tokio-comp", "connection-manager"] }
