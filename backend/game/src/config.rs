@@ -32,7 +32,7 @@ pub enum GameMode {
     FOREIGN,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Default, Clone, Debug)]
 pub struct GameSettings {
     /// 何回でもビンゴできるかどうか
     pub multiple_bingo: bool,

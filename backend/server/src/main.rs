@@ -2,7 +2,6 @@ mod error;
 mod routes;
 
 use axum::http::StatusCode;
-use axum::routing::{get, post};
 use axum::Router;
 use game::manager::GameManager;
 use oauth::DiscordOAuth;
@@ -34,11 +33,8 @@ async fn main() {
 
     let listener = TcpListener::bind("0.0.0.0:8080").await.unwrap();
     let router = Router::new()
-        .route(
-            "/login",
-            get(routes::login::get_login_url).post(routes::login::login),
-        )
-        .route("/game/new", post(routes::game::new_game));
+        .merge(routes::login::route())
+        .nest("/game", routes::game::route());
 
     axum::serve(
         listener,

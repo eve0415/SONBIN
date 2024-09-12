@@ -8,7 +8,7 @@ pub enum BoardState {
     NONE,
 }
 
-#[derive(Serialize, Clone, Debug)]
+#[derive(Serialize, Clone, PartialEq, Debug)]
 pub struct Board {
     /// UserのSnowflake ID + SessionID
     pub id: u64,

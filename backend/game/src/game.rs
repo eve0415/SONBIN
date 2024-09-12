@@ -53,3 +53,28 @@ impl Game {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_can_create_game() {
+        let user = UserId::default();
+        let (id, game) = Game::new(user, GameMode::NORMAL, GameSettings::default());
+
+        assert_eq!(id, game.id);
+        assert_eq!(user, game.host);
+    }
+
+    #[test]
+    fn it_can_join_game() {
+        let user = UserId::default();
+
+        let (_, mut game) = Game::new(user, GameMode::NORMAL, GameSettings::default());
+        let board = game.join(user).unwrap();
+
+        assert_eq!(user.get() + u64::from(game.id), board.id);
+        assert_eq!(board, game.join(user).unwrap());
+    }
+}

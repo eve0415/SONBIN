@@ -46,3 +46,63 @@ impl GameManager {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn it_can_create_game() {
+        let mut manager = GameManager::default();
+        let game = manager
+            .create_game(UserId::default(), GameMode::NORMAL, GameSettings::default())
+            .unwrap();
+
+        assert_eq!(manager.games.get(&game.id).unwrap().id, game.id);
+    }
+
+    #[test]
+    fn it_cannot_create_game() {
+        let mut manager = GameManager::default();
+        let user = UserId::default();
+
+        let game = manager
+            .create_game(user, GameMode::NORMAL, GameSettings::default())
+            .unwrap();
+        let err = manager
+            .create_game(user, GameMode::NORMAL, GameSettings::default())
+            .unwrap_err();
+
+        assert_eq!(
+            Error::OngoingGame {
+                game_id: game.id,
+                host: user
+            },
+            err
+        );
+    }
+
+    #[test]
+    fn it_can_join_game() {
+        let mut manager = GameManager::default();
+        let user = UserId::default();
+
+        let game = manager
+            .create_game(UserId::default(), GameMode::NORMAL, GameSettings::default())
+            .unwrap();
+
+        let board = manager.join_game(&game.id, user).unwrap();
+
+        assert_eq!(user.get() + u64::from(game.id), board.id);
+        assert_eq!(board, manager.join_game(&game.id, user).unwrap());
+    }
+
+    #[test]
+    fn it_cannot_join_unknown_game() {
+        let mut manager = GameManager::default();
+
+        let err = manager.join_game(&1, UserId::default()).unwrap_err();
+
+        assert_eq!(Error::NotFound { game_id: 1 }, err);
+    }
+}

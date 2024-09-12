@@ -1,6 +1,6 @@
 use serenity::all::UserId;
 
-#[derive(thiserror::Error, Debug)]
+#[derive(thiserror::Error, PartialEq, Debug)]
 pub enum Error {
     #[error("Max players reached")]
     MaxPlayers,
