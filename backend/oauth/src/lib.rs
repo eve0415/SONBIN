@@ -1,6 +1,7 @@
 pub mod error;
 pub mod security;
 
+use crate::error::OAuth2Error;
 use crate::security::SecurityManager;
 use base64::Engine;
 use rand::random;
@@ -10,6 +11,7 @@ use serde::{Deserialize, Serialize};
 use serenity::all::UserId;
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
+use std::io::{Error, ErrorKind};
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use url::Url;
@@ -48,7 +50,7 @@ impl DiscordOAuth {
         })
     }
 
-    pub async fn generate_authorization_url(self) -> error::Result<Url> {
+    pub async fn generate_authorization_url(self) -> Result<Url, OAuth2Error> {
         let (state, code_verifier, code_challenge) = generate_state_and_code_challenge();
 
         self.security_manager
@@ -70,12 +72,12 @@ impl DiscordOAuth {
                 ("prompt", "none".to_string()),
             ],
         )
-        .map_err(|e| error::Error::Unknown(e.into()))?;
+        .map_err(OAuth2Error::InternalError)?;
 
         Ok(url)
     }
 
-    pub async fn get_user(self, code: String, state: String) -> error::Result<User> {
+    pub async fn get_user(self, code: String, state: String) -> Result<User, OAuth2Error> {
         let code_verifier = self
             .security_manager
             .lock()
@@ -102,21 +104,20 @@ impl DiscordOAuth {
             .map_err(|e| {
                 log::error!("{:?}", e);
 
-                error::Error::Unknown(e.into())
+                OAuth2Error::Unknown(Box::new(e))
             })?;
 
         if response.status() != StatusCode::OK {
-            log::error!("Failed to get access token: {:?}", response.text().await);
-
-            return Err(error::Error::Unknown(anyhow::anyhow!(
-                "Failed to get access token"
-            )));
+            return Err(OAuth2Error::Unknown(Box::new(Error::new(
+                ErrorKind::UnexpectedEof,
+                response.text().await.unwrap(),
+            ))));
         }
 
         let res = response.json::<AccessTokenResponse>().await.map_err(|e| {
             log::error!("{:?}", e);
 
-            error::Error::Unknown(e.into())
+            OAuth2Error::Unknown(Box::new(e))
         })?;
 
         let response = self
@@ -127,18 +128,18 @@ impl DiscordOAuth {
             .bearer_auth(res.access_token)
             .send()
             .await
-            .map_err(|e| error::Error::Unknown(e.into()))?;
+            .map_err(|e| OAuth2Error::Unknown(Box::new(e)))?;
 
         if response.status() != StatusCode::OK {
             log::error!("Failed to get guild member: {:?}", response.text().await);
 
-            return Err(error::Error::NotMember);
+            return Err(OAuth2Error::NotMember);
         }
 
         let member = response
             .json::<serenity::model::guild::Member>()
             .await
-            .map_err(|e| error::Error::Unknown(e.into()))?;
+            .map_err(|e| OAuth2Error::Unknown(Box::new(e)))?;
 
         Ok(User {
             id: member.user.id,

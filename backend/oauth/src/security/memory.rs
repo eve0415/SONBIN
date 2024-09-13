@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::OAuth2Error;
 use crate::security::{SecurityManager, STATE_LIFETIME};
 use async_trait::async_trait;
 use std::collections::HashMap;
@@ -11,7 +11,11 @@ pub struct InMemorySecurityManager {
 
 #[async_trait]
 impl SecurityManager for InMemorySecurityManager {
-    async fn save_state(&mut self, state: String, code_verifier: String) -> Result<(), Error> {
+    async fn save_state(
+        &mut self,
+        state: String,
+        code_verifier: String,
+    ) -> Result<(), OAuth2Error> {
         let challenges = Arc::clone(&self.challenges);
 
         {
@@ -29,13 +33,55 @@ impl SecurityManager for InMemorySecurityManager {
         Ok(())
     }
 
-    async fn verify_state(&mut self, state: &str) -> Result<String, Error> {
+    async fn verify_state(&mut self, state: &str) -> Result<String, OAuth2Error> {
         let mut lock = self.challenges.lock().unwrap();
         match lock.remove(state) {
             Some(code_verifier) => Ok(code_verifier),
-            None => Err(Error::InvalidState {
+            None => Err(OAuth2Error::InvalidState {
                 state: state.to_owned(),
             }),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_save_state() {
+        let mut manager = InMemorySecurityManager::default();
+        let state = "state".to_string();
+        let code_verifier = "code_verifier".to_string();
+
+        manager
+            .save_state(state.clone(), code_verifier.clone())
+            .await
+            .unwrap();
+
+        let challenges = manager.challenges.lock().unwrap();
+        assert_eq!(challenges.get(&state), Some(&code_verifier));
+    }
+
+    #[tokio::test]
+    async fn test_verify_state() {
+        let mut manager = InMemorySecurityManager::default();
+        let state = "state".to_string();
+        let code_verifier = "code_verifier".to_string();
+
+        manager
+            .save_state(state.clone(), code_verifier.clone())
+            .await
+            .unwrap();
+
+        assert_eq!(manager.verify_state(&state).await.unwrap(), code_verifier);
+    }
+
+    #[tokio::test]
+    async fn test_verify_state_invalid() {
+        let mut manager = InMemorySecurityManager::default();
+        let state = "state".to_string();
+
+        assert!(manager.verify_state(&state).await.is_err())
     }
 }

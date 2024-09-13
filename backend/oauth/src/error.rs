@@ -1,5 +1,9 @@
+use redis::RedisError;
+use std::error::Error;
+use url::ParseError;
+
 #[derive(thiserror::Error, Debug)]
-pub enum Error {
+pub enum OAuth2Error {
     #[error("Redis connection lost")]
     RedisConnectionLost,
 
@@ -9,8 +13,12 @@ pub enum Error {
     #[error("Not a member in the guild")]
     NotMember,
 
-    #[error("Unknown error: {0}")]
-    Unknown(#[source] anyhow::Error),
-}
+    #[error(transparent)]
+    RedisError(#[from] RedisError),
 
-pub(crate) type Result<T, E = Error> = std::result::Result<T, E>;
+    #[error(transparent)]
+    InternalError(#[from] ParseError),
+
+    #[error(transparent)]
+    Unknown(#[from] Box<dyn Error + Sync + Send>),
+}
