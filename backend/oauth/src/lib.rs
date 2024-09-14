@@ -1,14 +1,19 @@
 pub mod error;
+pub mod security;
 
+use crate::error::OAuth2Error;
+use crate::security::SecurityManager;
 use base64::Engine;
 use rand::random;
-use redis::{AsyncCommands, Client as RedisClient};
 use reqwest::ClientBuilder;
 use reqwest::{Client as HttpClient, StatusCode};
 use serde::{Deserialize, Serialize};
 use serenity::all::UserId;
 use sha2::{Digest, Sha256};
 use std::collections::HashMap;
+use std::io::{Error, ErrorKind};
+use std::sync::Arc;
+use tokio::sync::Mutex;
 use url::Url;
 
 const AUTHORIZATION_URL: &str = "https://discord.com/oauth2/authorize";
@@ -17,17 +22,16 @@ const DISCORD_CDN_URL: &str = "https://cdn.discordapp.com";
 const RESPONSE_TYPE: &str = "code";
 const SCOPE: &str = "identify guilds.members.read";
 const CODE_CHALLENGE_METHOD: &str = "S256";
-const STATE_LIFETIME: u64 = 300;
 const GRANT_TYPE: &str = "authorization_code";
 const GUILD_ID: &str = "1176516474102353950";
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct DiscordOAuth {
     id: String,
     secret: String,
     redirect_url: String,
-    redis_client: RedisClient,
     http_client: HttpClient,
+    security_manager: Arc<Mutex<dyn SecurityManager>>,
 }
 
 impl DiscordOAuth {
@@ -35,34 +39,25 @@ impl DiscordOAuth {
         id: String,
         secret: String,
         redirect_url: String,
-        redis_client: RedisClient,
-    ) -> Self {
-        DiscordOAuth {
+        security_manager: Arc<Mutex<dyn SecurityManager>>,
+    ) -> Box<Self> {
+        Box::new(DiscordOAuth {
             id,
             secret,
             redirect_url,
-            redis_client,
             http_client: ClientBuilder::new().https_only(true).build().unwrap(),
-        }
+            security_manager,
+        })
     }
 
-    pub async fn generate_authorization_url(self) -> error::Result<Url> {
+    pub async fn generate_authorization_url(self) -> Result<Url, OAuth2Error> {
         let (state, code_verifier, code_challenge) = generate_state_and_code_challenge();
 
-        redis::cmd("HSETEX")
-            .arg("oauth")
-            .arg(STATE_LIFETIME)
-            .arg(state.clone())
-            .arg(code_verifier)
-            .exec_async(
-                &mut self
-                    .redis_client
-                    .get_multiplexed_tokio_connection()
-                    .await
-                    .map_err(|_| error::Error::RedisConnectionLost)?,
-            )
+        self.security_manager
+            .lock()
             .await
-            .map_err(|e| error::Error::Unknown(e.into()))?;
+            .save_state(state.clone(), code_verifier.clone())
+            .await?;
 
         let url = Url::parse_with_params(
             AUTHORIZATION_URL,
@@ -77,30 +72,18 @@ impl DiscordOAuth {
                 ("prompt", "none".to_string()),
             ],
         )
-        .map_err(|e| error::Error::Unknown(e.into()))?;
+        .map_err(OAuth2Error::InternalError)?;
 
         Ok(url)
     }
 
-    pub async fn get_user(self, code: String, state: String) -> error::Result<User> {
-        let mut conn = self
-            .redis_client
-            .get_multiplexed_tokio_connection()
+    pub async fn get_user(self, code: String, state: String) -> Result<User, OAuth2Error> {
+        let code_verifier = self
+            .security_manager
+            .lock()
             .await
-            .map_err(|_| error::Error::RedisConnectionLost)?;
-        let code_verifier: String = redis::cmd("HGET")
-            .arg("oauth")
-            .arg(state.to_owned())
-            .query_async(&mut conn)
-            .await
-            .map_err(|_| error::Error::InvalidState {
-                state: state.to_owned(),
-            })?;
-
-        let _: () = conn
-            .hdel("oauth", state.to_owned())
-            .await
-            .map_err(|e| error::Error::Unknown(e.into()))?;
+            .verify_state(&state)
+            .await?;
 
         let params = HashMap::from([
             ("client_id", self.id.to_owned()),
@@ -121,21 +104,20 @@ impl DiscordOAuth {
             .map_err(|e| {
                 log::error!("{:?}", e);
 
-                error::Error::Unknown(e.into())
+                OAuth2Error::Unknown(Box::new(e))
             })?;
 
         if response.status() != StatusCode::OK {
-            log::error!("Failed to get access token: {:?}", response.text().await);
-
-            return Err(error::Error::Unknown(anyhow::anyhow!(
-                "Failed to get access token"
-            )));
+            return Err(OAuth2Error::Unknown(Box::new(Error::new(
+                ErrorKind::UnexpectedEof,
+                response.text().await.unwrap(),
+            ))));
         }
 
         let res = response.json::<AccessTokenResponse>().await.map_err(|e| {
             log::error!("{:?}", e);
 
-            error::Error::Unknown(e.into())
+            OAuth2Error::Unknown(Box::new(e))
         })?;
 
         let response = self
@@ -146,18 +128,18 @@ impl DiscordOAuth {
             .bearer_auth(res.access_token)
             .send()
             .await
-            .map_err(|e| error::Error::Unknown(e.into()))?;
+            .map_err(|e| OAuth2Error::Unknown(Box::new(e)))?;
 
         if response.status() != StatusCode::OK {
             log::error!("Failed to get guild member: {:?}", response.text().await);
 
-            return Err(error::Error::NotMember);
+            return Err(OAuth2Error::NotMember);
         }
 
         let member = response
             .json::<serenity::model::guild::Member>()
             .await
-            .map_err(|e| error::Error::Unknown(e.into()))?;
+            .map_err(|e| OAuth2Error::Unknown(Box::new(e)))?;
 
         Ok(User {
             id: member.user.id,

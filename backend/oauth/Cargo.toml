@@ -4,14 +4,15 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
-anyhow.workspace = true
 log.workspace = true
 rand.workspace = true
 redis.workspace = true
 serde.workspace = true
 serenity.workspace = true
 thiserror.workspace = true
+tokio.workspace = true
 
+async-trait = "0.1.82"
 base64 = "0.22.1"
 digest = "0.10.7"
 reqwest = { version = "0.12.7", features = ["rustls-tls-native-roots", "multipart", "json"] }

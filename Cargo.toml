@@ -11,10 +11,10 @@ board = { path = "backend/board" }
 game = { path = "backend/game" }
 oauth = { path = "backend/oauth" }
 
-anyhow = "1.0.88"
 log = "0.4.22"
 rand = "0.8.5"
-redis = { version = "0.26.1", features = ["aio", "r2d2", "ahash", "tokio-comp", "connection-manager"] }
+redis = { version = "0.27.0", features = ["aio", "r2d2", "ahash", "tokio-comp", "connection-manager","sentinel"] }
 serde = { version = "1.0.210", features = ["derive"] }
 serenity = { version = "0.12.2", default-features = false }
 thiserror = "1.0.63"
+tokio = { version = "1.40.0", features = ["rt-multi-thread", "macros", "rt"] }

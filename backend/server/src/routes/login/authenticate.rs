@@ -2,6 +2,7 @@ use crate::error::{AppError, ResponseResult};
 use crate::AppState;
 use axum::extract::State;
 use axum::http::StatusCode;
+use oauth::error::OAuth2Error;
 use oauth::User;
 use serde::{Deserialize, Serialize};
 
@@ -29,19 +30,32 @@ pub(crate) async fn login(
         Ok(user) => Ok(axum::response::Json(user)),
 
         Err(e) => match e {
-            oauth::error::Error::InvalidState { state: _ } => Err(AppError {
+            OAuth2Error::InvalidState { state: _ } => Err(AppError {
                 status: StatusCode::UNAUTHORIZED,
                 message: None,
             }),
-            oauth::error::Error::NotMember => Err(AppError {
+
+            OAuth2Error::NotMember => Err(AppError {
                 status: StatusCode::FORBIDDEN,
                 message: None,
             }),
-            oauth::error::Error::RedisConnectionLost => Err(AppError {
+
+            OAuth2Error::RedisConnectionLost => Err(AppError {
                 status: StatusCode::INTERNAL_SERVER_ERROR,
                 message: None,
             }),
-            oauth::error::Error::Unknown(e) => {
+
+            OAuth2Error::RedisError(_) => Err(AppError {
+                status: StatusCode::INTERNAL_SERVER_ERROR,
+                message: None,
+            }),
+
+            OAuth2Error::InternalError(_) => Err(AppError {
+                status: StatusCode::INTERNAL_SERVER_ERROR,
+                message: None,
+            }),
+
+            OAuth2Error::Unknown(e) => {
                 log::error!("Unknown error: {}", e);
 
                 Err(AppError {
